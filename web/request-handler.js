@@ -2,7 +2,6 @@ var path = require('path');
 var fs = require('fs');
 var archive = require('../helpers/archive-helpers');
 var httpHelpers = require('./http-helpers');
-//do a get request on http://google.com to get html data
 
 exports.handleRequest = function (req, res) {
   var url = req.url;
@@ -30,7 +29,7 @@ exports.handleRequest = function (req, res) {
     });
   } else if (method === 'POST') {
     req.on('data', function(data) {
-      console.log('here first');
+      // console.log('here first');
       data = '' + data;
       var url = data.slice(4);
 
@@ -38,14 +37,19 @@ exports.handleRequest = function (req, res) {
         if (exists) {
           
           res.writeHead(302, {Location: 'http://127.0.0.1:8080/' + url});
+          res.end();
         } else {
           archive.addUrlToList(url.toString(), function() {
-            console.log('here');
-            res.writeHead(302, {Location: 'http://127.0.0.1:8080/' + 'loading.html'});
+            // console.log('here');
+            fs.readFile(archive.paths.loading, 'utf8', function(err, data) {
+              if (err) { return console.log(err); }
+
+              res.writeHead(302, httpHelpers.headers);
+              res.write(data);
+              res.end();
+            });
           });
         }
-
-        res.end();
       });
 
     });
