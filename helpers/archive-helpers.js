@@ -1,6 +1,8 @@
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
+var http = require('http');
+var https = require('https');
 
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
@@ -46,31 +48,40 @@ exports.isUrlInList = function(target, cb) {
 exports.addUrlToList = function(url, cb) {
   exports.isUrlInList(url, function(exists) {
     if (exists) {
-      console.log('it here');
+      return console.log('it here');
     } else {
-      fs.appendFile(exports.paths.list, url, 'utf8', cb);
+      fs.appendFile(exports.paths.list, url + '\n', 'utf8', cb);
     }
   });
 };
 
 exports.isUrlArchived = function(target, cb) {
-  var filePath = exports.paths.archivedSites + '/' + target;
-  fs.readFile(filePath, 'utf8', function(err, data) {
-    cb(!err ? true : false);
+  fs.readdir(exports.paths.archivedSites, function(err, files) {
+    if (err) { return console.log('err'); }
+    cb(files.indexOf(target) !== -1);
   });
 };
 
-exports.downloadUrls = function(urlArray) {
-  urlArray.forEach(function(url) {
+exports.downloadUrls = function(urlsArray) {
+  urlsArray.forEach(function(url) {
     exports.isUrlArchived(url, function(exists) {
       if (exists) { return; }
+      var body = '';
 
-      var filePath = exports.paths.archivedSites + '/' + url;
-      fs.writeFile(filePath, url, function(err) {
-        if (err) { return console.log(err); }
-        
-        console.log('downloaded!');
-      });     
+      var request = http.get({'host': url}, function(response) {
+        response.on('data', function(data) {
+          body += data;
+        });
+        response.on('end', function() {
+          var filePath = exports.paths.archivedSites + '/' + url;
+          fs.writeFile(filePath, body.toString(), function(err) {
+            if (err) { return console.log(err); }
+            
+            console.log('downloaded!');
+          });     
+        });
+      });
+      request.end();
     });
   });
 };

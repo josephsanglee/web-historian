@@ -2,7 +2,6 @@ var path = require('path');
 var fs = require('fs');
 var archive = require('../helpers/archive-helpers');
 var httpHelpers = require('./http-helpers');
-// require more modules/folders here!
 //do a get request on http://google.com to get html data
 
 exports.handleRequest = function (req, res) {
@@ -32,7 +31,7 @@ exports.handleRequest = function (req, res) {
   } else if (method === 'POST') {
     req.on('data', function(data) {
       data = '' + data;
-      var url = data.slice(4) + '\n';
+      var url = data.slice(4);
 
       archive.addUrlToList(url, function() {
         res.writeHead(302, httpHelpers.headers);
