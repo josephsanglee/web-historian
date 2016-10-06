@@ -30,10 +30,12 @@ exports.handleRequest = function (req, res) {
     });
   } else if (method === 'POST') {
     req.on('data', function(data) {
+      console.log('here first');
       data = '' + data;
       var url = data.slice(4);
 
-      archive.addUrlToList(url, function() {
+      archive.addUrlToList(url.toString(), function() {
+        console.log('here');
         res.writeHead(302, httpHelpers.headers);
         res.end();
       });
