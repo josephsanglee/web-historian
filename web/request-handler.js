@@ -30,23 +30,14 @@ exports.handleRequest = function (req, res) {
       res.end(data);
     });
   } else if (method === 'POST') {
-
     req.on('data', function(data) {
       data = '' + data;
-      data = data.slice(4) + '\n';
+      var url = data.slice(4) + '\n';
 
-      archive.isUrlInList(data, function(exists) {
-        console.log(exists);
+      archive.addUrlToList(url, function() {
         res.writeHead(302, httpHelpers.headers);
-        if (exists) {
-          console.log('exists');
-        } else {
-          archive.addUrlToList(data, function() { return; });
-        }
-        
         res.end();
       });
-
     });
   }
 };
