@@ -3,6 +3,7 @@ var fs = require('fs');
 var archive = require('../helpers/archive-helpers');
 var httpHelpers = require('./http-helpers');
 // require more modules/folders here!
+//do a get request on http://google.com to get html data
 
 exports.handleRequest = function (req, res) {
   var url = req.url;
@@ -31,18 +32,21 @@ exports.handleRequest = function (req, res) {
   } else if (method === 'POST') {
 
     req.on('data', function(data) {
-      console.log(data);
-      fs.appendFile(archive.paths.list, data.slice(4) + '\n', 'utf8', function(err) {
-        if (err) {
-          res.writeHead(404, httpHelpers.headers);
+      data = '' + data;
+      data = data.slice(4) + '\n';
+
+      archive.isUrlInList(data, function(exists) {
+        console.log(exists);
+        res.writeHead(302, httpHelpers.headers);
+        if (exists) {
+          console.log('exists');
         } else {
-          res.writeHead(302, httpHelpers.headers);
+          archive.addUrlToList(data, function() { return; });
         }
+        
         res.end();
       });
+
     });
   }
-
-
-  // res.end(archive.paths.list);
 };
