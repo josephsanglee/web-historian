@@ -14,6 +14,7 @@ var https = require('https');
 exports.paths = {
   siteAssets: path.join(__dirname, '../web/public'),
   index: path.join(__dirname, '../web/public/index.html'),
+  loading: path.join(__dirname, '../web/public/loading.html'),
   archivedSites: path.join(__dirname, '../archives/sites'),
   list: path.join(__dirname, '../archives/sites.txt')
 };

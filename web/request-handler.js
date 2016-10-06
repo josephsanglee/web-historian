@@ -34,11 +34,20 @@ exports.handleRequest = function (req, res) {
       data = '' + data;
       var url = data.slice(4);
 
-      archive.addUrlToList(url.toString(), function() {
-        console.log('here');
-        res.writeHead(302, httpHelpers.headers);
+      archive.isUrlArchived(url, function(exists) {
+        if (exists) {
+          
+          res.writeHead(302, {Location: 'http://127.0.0.1:8080/' + url});
+        } else {
+          archive.addUrlToList(url.toString(), function() {
+            console.log('here');
+            res.writeHead(302, {Location: 'http://127.0.0.1:8080/' + 'loading.html'});
+          });
+        }
+
         res.end();
       });
+
     });
   }
 };

@@ -20,7 +20,7 @@ if (module.parent) {
   console.log('Listening on http://' + ip + ':' + port);
 }
 
-setInterval(function() {
-  htmlfetcher.fetch();
-}, 5000);
+// setInterval(function() {
+//   htmlfetcher.fetch();
+// }, 5000);
 
